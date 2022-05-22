@@ -1,0 +1,6 @@
+# You can manually add language to any "KK" plugin in /plugins/KKcore/languages/PLUGIN_NAME/LANG_NAME.yml
+# LANG_NAME.yml -> example: en.yml pl.yml etc.
+# language: en -> file name: en.yml
+# How to translate? Copy file en.yml -> Change name to specific language -> Change texts in this file
+# Example: ["noPermission": "&cYou don't have permission"] to ["noPermission": "&cYour message"]
+language: en

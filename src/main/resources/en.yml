@@ -1,0 +1,22 @@
+# Colors:
+# 1) &COLOR -> Color is a char from a to f or from 0 to 9
+# 2) #HEX -> Color from HEX (Only Minecraft 1.16+)
+
+# Types:
+# 1) One line -> example: noPermission: "TEXT"
+# 2) Multiple line -> example:
+# noPermission:
+#   - "First line"
+#   - "Second line"
+
+# Placeholders:
+# If message contains placeholders, you can see comment above message about it
+# How to use? Place {PLACEHOLDER} in message. Example: {PERMISSION}
+# PAPI: If you have installed PAPI, you can add its placeholders to messages! %papi_placeholder%
+
+# {PERMISSION} -> Required permission | No PAPI
+noPermission: "&cYou don't have permissions to use this command! &7(&e{PERMISSION}&7)"
+# {USAGE} -> Correct usage | No PAPI
+wrongUsage: "&cWrong usage! Correct usage: &e{USAGE}"
+# No PAPI
+onlyPlayer: "&cThis command is only for players!"
