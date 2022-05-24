@@ -55,18 +55,20 @@ public abstract class KKcommand extends Command {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if(!commandInfo.permission().equalsIgnoreCase("")) {
             if(!sender.hasPermission(commandInfo.permission())) {
-                sender.sendMessage(languageManager.getMessage("noPermission", new HashMap<>(){{
-                    put("PERMISSION", commandInfo.permission());
-                }}));
+                HashMap<String, String> replaces = new HashMap<>();
+                replaces.put("PERMISSION", commandInfo.permission());
+
+                sender.sendMessage(languageManager.getMessage("noPermission",replaces));
                 return false;
             }
         }
 
         if(commandInfo.requiredArgs()) {
             if(args.length < commandInfo.argsCount()) {
-                sender.sendMessage(languageManager.getMessage("wrongUsage", new HashMap<>(){{
-                    put("USAGE", commandInfo.usage());
-                }}));
+                HashMap<String, String> replaces = new HashMap<>();
+                replaces.put("USAGE", commandInfo.usage());
+
+                sender.sendMessage(languageManager.getMessage("wrongUsage", replaces));
                 return false;
             }
         }

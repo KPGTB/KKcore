@@ -42,7 +42,7 @@ public class ListenerManager {
 
     public void registerListeners(String listenerPackage) {
         for(Class<?> clazz : ReflectionUtil.getAllClassesInPackage(jarFile, listenerPackage)) {
-            if(Arrays.stream(clazz.getInterfaces()).toList().contains(Listener.class)) {
+            if(Arrays.asList(clazz.getInterfaces()).contains(Listener.class)) {
                 try {
                     Listener listener = (Listener) clazz.getDeclaredConstructor(MessageUtil.class, LanguageManager.class)
                             .newInstance(messageUtil,languageManager);

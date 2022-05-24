@@ -35,9 +35,12 @@ public class KKcoreInfoCommand extends KKcommand {
         sender.sendMessage(
             messageUtil.color(
                 "&aThis is core of \"KK\" plugins created by KPG-TB"
-            ),
-            messageUtil.color(
-                "&aThis plugin is required to work other \"KK\" plugins!"
             )
-        );    }
+        );
+        sender.sendMessage(
+                messageUtil.color(
+                        "&aThis plugin is required to work other \"KK\" plugins!"
+                )
+        );
+    }
 }
