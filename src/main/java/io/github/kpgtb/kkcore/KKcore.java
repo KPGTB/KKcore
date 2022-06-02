@@ -16,6 +16,8 @@
 
 package io.github.kpgtb.kkcore;
 
+import io.github.kpgtb.kkcore.manager.DataManager;
+import io.github.kpgtb.kkcore.manager.DataType;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
 import io.github.kpgtb.kkcore.manager.command.CommandManager;
 import io.github.kpgtb.kkcore.manager.listener.ListenerManager;
@@ -30,6 +32,7 @@ public final class KKcore extends JavaPlugin {
     private LanguageManager languageManager;
     private CommandManager commandManager;
     private ListenerManager listenerManager;
+    private DataManager dataManager;
 
     @Override
     public void onEnable() {
@@ -48,11 +51,25 @@ public final class KKcore extends JavaPlugin {
         );
         languageManager.reloadMessages();
 
+        dataManager = new DataManager(
+                "KKcore",
+                DataType.valueOf(
+                        getConfig().getString("data.type").toUpperCase()
+                ),
+                getDataFolder().getAbsolutePath(),
+                messageUtil,
+                getFile(),
+                "defaultData",
+                 this
+        );
+
         commandManager = new CommandManager(getFile(),"KKcore",messageUtil, languageManager);
         commandManager.registerCommands("io.github.kpgtb.kkcore.command");
 
         listenerManager = new ListenerManager(messageUtil,languageManager,getFile(),this);
         listenerManager.registerListeners("io.github.kpgtb.kkcore.listener");
+
+
     }
 
     @Override

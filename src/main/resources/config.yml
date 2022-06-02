@@ -4,3 +4,14 @@
 # How to translate? Copy file en.yml -> Change name to specific language -> Change texts in this file
 # Example: ["noPermission": "&cYou don't have permission"] to ["noPermission": "&cYour message"]
 language: en
+
+data:
+  # flat - .yml files
+  # sqlite - .sql files
+  # mysql - MySQL
+  type: flat
+  mysql-host: "localhost"
+  mysql-user: "root"
+  mysql-password: ""
+  mysql-port: 3306
+  mysql-database: "minecraft"
