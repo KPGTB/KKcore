@@ -203,17 +203,55 @@ public class DataManager {
                     boolean hasNext = resultSet.next();
 
                     if(!hasNext) {
-                        return null;
+                        break;
                     }
 
-                    return resultSet.getObject(value.toString());
+                    Object result = resultSet.getObject(value.toString());
+                    resultSet.close();
+
+                     return result;
                 } catch (SQLException e) {
                     messageUtil.sendErrorToConsole("Error while getting data from database! [localization: "+localization+" | key: "+key+" | value: " + value + "]");
-                    return null;
+                    break;
                 }
         }
 
         return null;
+    }
+    public Set<Object> getKeys(String localization) {
+        Set<Object> keys = new HashSet<>();
+
+        switch (type) {
+            case FLAT:
+                File file = new File(dataDirectory.getAbsolutePath()  + "/" + localization + ".yml");
+                if(!file.exists()) {
+                    messageUtil.sendErrorToConsole("File not found! ["+localization+"]");
+                    break;
+                }
+
+                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+                keys.addAll(configuration.getKeys(false));
+                break;
+            case MYSQL:
+            case SQLITE:
+                try {
+                    PreparedStatement statement = connection.prepareStatement(
+                            "SELECT id FROM "+localization.replace("/", "_")
+                    );
+
+                    ResultSet resultSet = statement.executeQuery();
+                    while (resultSet.next()) {
+                        keys.add(resultSet.getObject("id"));
+                    }
+                    resultSet.close();
+                } catch (SQLException e) {
+                    messageUtil.sendErrorToConsole("Error while getting keys from database! [localization: "+localization+"]");
+                    break;
+                }
+                break;
+        }
+
+        return keys;
     }
 
     public void closeConnection() {
