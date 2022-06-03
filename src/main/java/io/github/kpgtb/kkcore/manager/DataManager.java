@@ -18,17 +18,20 @@ package io.github.kpgtb.kkcore.manager;
 
 import com.google.common.io.Files;
 import io.github.kpgtb.kkcore.util.MessageUtil;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+//TODO:
+// get()
+// set()
 
 public class DataManager {
     private final String pluginName;
@@ -158,11 +161,6 @@ public class DataManager {
                break;
        }
     }
-
-    //TODO:
-    // get()
-    // set()
-
     private Set<File> getDefaultFiles() {
         Set<File> files = new HashSet<>();
         try {
@@ -180,6 +178,44 @@ public class DataManager {
         }
         return files;
     }
+
+    public Object get(String localization, Object key, Object value) {
+        switch(type) {
+            case FLAT:
+
+                File file = new File(dataDirectory.getAbsolutePath()  + "/" + localization + ".yml");
+                if(!file.exists()) {
+                    messageUtil.sendErrorToConsole("File not found! ["+localization+"]");
+                    break;
+                }
+
+                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+                return configuration.get(key.toString() + "." + value.toString());
+            case SQLITE:
+            case MYSQL:
+
+                try {
+                    PreparedStatement statement = connection.prepareStatement(
+                            "SELECT "+value+ " FROM "+localization.replace("/", "_")+" WHERE  id="+key
+                    );
+
+                    ResultSet resultSet = statement.executeQuery();
+                    boolean hasNext = resultSet.next();
+
+                    if(!hasNext) {
+                        return null;
+                    }
+
+                    return resultSet.getObject(value.toString());
+                } catch (SQLException e) {
+                    messageUtil.sendErrorToConsole("Error while getting data from database! [localization: "+localization+" | key: "+key+" | value: " + value + "]");
+                    return null;
+                }
+        }
+
+        return null;
+    }
+
     public void closeConnection() {
         try {
             if(connection != null && !connection.isClosed()) {
