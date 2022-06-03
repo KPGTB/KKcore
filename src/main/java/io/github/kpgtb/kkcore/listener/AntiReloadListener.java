@@ -47,7 +47,7 @@ public class AntiReloadListener implements Listener {
 
         for(String cmd : reloadCommands) {
             if(command.startsWith(cmd)) {
-                player.sendTitle(messageUtil.getPluginTag(), languageManager.getMessage("noReload"),10,70,20);
+                player.sendTitle(messageUtil.getPluginTag(), languageManager.getMessage("noReload"));
                 break;
             }
         }

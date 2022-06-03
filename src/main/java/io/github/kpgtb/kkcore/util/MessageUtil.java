@@ -61,7 +61,7 @@ public class MessageUtil {
     }
     public void sendErrorToConsole(String error) {
         console.sendMessage(color("&c------------&7[&r" + pluginTag + "&7]&c------------"));
-        console.sendMessage(color("&7[&4INFO&7]&r &c" + error));
+        console.sendMessage(color("&7[&4ERROR&7]&r &c" + error));
         console.sendMessage(color("&c------------&7[&r" + pluginTag + "&7]&c------------"));
     }
 

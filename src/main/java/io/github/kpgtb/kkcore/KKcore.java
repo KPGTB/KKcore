@@ -59,7 +59,8 @@ public final class KKcore extends JavaPlugin {
                 getDataFolder().getAbsolutePath(),
                 messageUtil,
                 getFile(),
-                "defaultData",
+                "defaultData/flat",
+                 getTextResource("defaultData/sql/default.txt"),
                  this
         );
 
@@ -75,5 +76,7 @@ public final class KKcore extends JavaPlugin {
     @Override
     public void onDisable() {
         messageUtil.sendInfoToConsole("Disabling KKcore plugin by KPG-TB.");
+
+        dataManager.closeConnection();
     }
 }
