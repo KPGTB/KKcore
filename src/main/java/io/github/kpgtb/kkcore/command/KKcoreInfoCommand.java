@@ -16,22 +16,28 @@
 
 package io.github.kpgtb.kkcore.command;
 
+import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
 import io.github.kpgtb.kkcore.manager.command.CommandInfo;
 import io.github.kpgtb.kkcore.manager.command.KKcommand;
 import io.github.kpgtb.kkcore.util.MessageUtil;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 
 @CommandInfo(name="KKcoreInfo", description = "This command shows info about KKcore", aliases = {"kkcinfo"})
 public class KKcoreInfoCommand extends KKcommand {
-    public KKcoreInfoCommand(MessageUtil messageUtil, LanguageManager languageManager) {
-        super(messageUtil, languageManager);
+
+    private final MessageUtil messageUtil;
+
+    public KKcoreInfoCommand(MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, FileConfiguration config) {
+        super(messageUtil, languageManager, dataManager, config);
+
+        this.messageUtil = messageUtil;
     }
+
 
     @Override
     public void executeCommand(CommandSender sender, String[] args) {
-        MessageUtil messageUtil = getMessageUtil();
-
         sender.sendMessage(
             messageUtil.color(
                 "&aThis is core of \"KK\" plugins created by KPG-TB"

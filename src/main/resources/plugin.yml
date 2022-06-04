@@ -1,5 +1,5 @@
 name: ${project.artifactId}
-version: '${project.version}'
+version: ${project.version}
 main: io.github.kpgtb.kkcore.KKcore
 authors: [ KPG-TB ]
 description: Core of KK minecraft plugins by KPG-TB

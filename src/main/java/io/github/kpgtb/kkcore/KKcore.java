@@ -22,16 +22,11 @@ import io.github.kpgtb.kkcore.manager.LanguageManager;
 import io.github.kpgtb.kkcore.manager.command.CommandManager;
 import io.github.kpgtb.kkcore.manager.listener.ListenerManager;
 import io.github.kpgtb.kkcore.util.MessageUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class KKcore extends JavaPlugin {
 
     private MessageUtil messageUtil;
-    private LanguageManager languageManager;
-    private CommandManager commandManager;
-    private ListenerManager listenerManager;
     private DataManager dataManager;
 
     @Override
@@ -42,12 +37,12 @@ public final class KKcore extends JavaPlugin {
 
         messageUtil.sendInfoToConsole("Loading KKcore plugin by KPG-TB.");
 
-        languageManager = new LanguageManager(
-            "KKcore",
-            getConfig().getString("language"),
-            getDataFolder().getAbsolutePath(),
-            getResource("en.yml"),
-            messageUtil
+        LanguageManager languageManager = new LanguageManager(
+                "KKcore",
+                getConfig().getString("language"),
+                getDataFolder().getAbsolutePath(),
+                getResource("en.yml"),
+                messageUtil
         );
         languageManager.reloadMessages();
 
@@ -64,10 +59,10 @@ public final class KKcore extends JavaPlugin {
                  this
         );
 
-        commandManager = new CommandManager(getFile(),"KKcore",messageUtil, languageManager);
+        CommandManager commandManager = new CommandManager(getFile(), "KKcore", messageUtil, languageManager,dataManager, getConfig());
         commandManager.registerCommands("io.github.kpgtb.kkcore.command");
 
-        listenerManager = new ListenerManager(messageUtil,languageManager,getFile(),this);
+        ListenerManager listenerManager = new ListenerManager(messageUtil, languageManager,dataManager, getFile(), this, getConfig());
         listenerManager.registerListeners("io.github.kpgtb.kkcore.listener");
 
 

@@ -29,14 +29,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-//TODO:
-// get()
-// set()
-
 public class DataManager {
-    private final String pluginName;
     private final DataType type;
-    private final String dataFolderPath;
     private final MessageUtil messageUtil;
     private final File jarFile;
     private final String defaultFlatDataFolderName;
@@ -47,9 +41,7 @@ public class DataManager {
     private Connection connection;
 
     public DataManager(String pluginName, DataType type, String dataFolderPath, MessageUtil messageUtil, File jarFile, String defaultDataFolderName,Reader defaultSqlDataFile, JavaPlugin plugin) {
-        this.pluginName = pluginName;
         this.type = type;
-        this.dataFolderPath = dataFolderPath;
         this.messageUtil = messageUtil;
         this.jarFile = jarFile;
         this.defaultFlatDataFolderName = defaultDataFolderName;
@@ -132,6 +124,7 @@ public class DataManager {
 
                            // Copy default file content to final file
                            InputStream inputStream = plugin.getResource(defaultFlatDataFolderName +fileDir);
+                           assert inputStream != null;
                            byte[] fileContent = new byte[inputStream.available()];
                            inputStream.read(fileContent);
                            Files.write(fileContent, file);
@@ -252,6 +245,55 @@ public class DataManager {
         }
 
         return keys;
+    }
+
+    public boolean set(String localization, Object key, Object value, Object newValue) {
+        switch(type){
+            case FLAT:
+
+                File file = new File(dataDirectory.getAbsolutePath()  + "/" + localization + ".yml");
+                if(!file.exists()) {
+                    messageUtil.sendErrorToConsole("File not found! ["+localization+"]");
+                    break;
+                }
+
+                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+                configuration.set(key + "." + value, newValue);
+                try {
+                    configuration.save(file);
+                    return true;
+                } catch (IOException e) {
+                    messageUtil.sendErrorToConsole("Error while saving file! ["+localization+"]");
+                    e.printStackTrace();
+                }
+                break;
+            case SQLITE:
+            case MYSQL:
+
+                //Check if key exists
+                boolean check = getKeys(localization).contains(key);
+
+                try {
+                    if (!check) {
+                        PreparedStatement addKeyStatement = connection.prepareStatement(
+                                "INSERT INTO " + localization.replace("/", "_") + " (id) VALUES (" + key + ")"
+                        );
+                        addKeyStatement.execute();
+                    }
+
+                    PreparedStatement statement = connection.prepareStatement(
+                            "UPDATE " + localization.replace("/", "_") + " SET " + value + "=" + newValue + " WHERE id=" + key
+                    );
+                    statement.execute();
+                    return true;
+                } catch(SQLException e) {
+                    messageUtil.sendErrorToConsole("Error while inserting data to database! [localization: "+localization+" | key: "+key+" | value: " + value + " | new value: "+newValue+"]");
+                    e.printStackTrace();
+                }
+                break;
+        }
+
+        return false;
     }
 
     public void closeConnection() {

@@ -16,8 +16,10 @@
 
 package io.github.kpgtb.kkcore.listener;
 
+import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
 import io.github.kpgtb.kkcore.util.MessageUtil;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,7 +32,7 @@ public class AntiReloadListener implements Listener {
     private final MessageUtil messageUtil;
     private final LanguageManager languageManager;
 
-    public AntiReloadListener(MessageUtil messageUtil, LanguageManager languageManager) {
+    public AntiReloadListener(MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, FileConfiguration config) {
         this.messageUtil = messageUtil;
         this.languageManager = languageManager;
     }

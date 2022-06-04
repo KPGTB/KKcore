@@ -16,28 +16,26 @@
 
 package io.github.kpgtb.kkcore.manager.command;
 
+import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
 import io.github.kpgtb.kkcore.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 public abstract class KKcommand extends Command {
     private final CommandInfo commandInfo;
-    private final MessageUtil messageUtil;
     private final LanguageManager languageManager;
 
-    public KKcommand(MessageUtil messageUtil, LanguageManager languageManager) {
+    public KKcommand(MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, FileConfiguration config) {
         super("");
 
-        this.messageUtil = messageUtil;
         this.languageManager = languageManager;
 
         commandInfo = getClass().getDeclaredAnnotation(CommandInfo.class);
@@ -45,6 +43,7 @@ public abstract class KKcommand extends Command {
             messageUtil.sendErrorToConsole("Commands must have CommandInfo!");
             Bukkit.shutdown();
         }
+        assert commandInfo != null;
         setName(commandInfo.name());
         setDescription(commandInfo.description());
         setAliases(Arrays.asList(commandInfo.aliases()));
@@ -52,7 +51,7 @@ public abstract class KKcommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String label, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String label, String[] args) {
         if(!commandInfo.permission().equalsIgnoreCase("")) {
             if(!sender.hasPermission(commandInfo.permission())) {
                 HashMap<String, String> replaces = new HashMap<>();
@@ -92,8 +91,4 @@ public abstract class KKcommand extends Command {
     public CommandInfo getCommandInfo() {
         return commandInfo;
     }
-    public MessageUtil getMessageUtil() {
-        return messageUtil;
-    }
-
 }

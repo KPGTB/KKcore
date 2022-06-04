@@ -38,7 +38,7 @@ public class LanguageManager {
     private final MessageUtil messageUtil;
     private final InputStream defaultMessagesFile;
 
-    HashMap<String, String> messages = new HashMap<>();
+    private final HashMap<String, String> messages = new HashMap<>();
 
     public LanguageManager(String pluginName, String language, String dataFolderPath, InputStream defaultMessagesFile, MessageUtil messageUtil) {
         this.pluginName = pluginName;
@@ -88,18 +88,17 @@ public class LanguageManager {
             }
 
             if(message instanceof List<?>) {
-                String finalMessage = "";
+                StringBuilder finalMessage = new StringBuilder();
 
                 for (String m : (List<String>) message) {
-                    if(finalMessage.equalsIgnoreCase("")) {
-                        finalMessage = m;
+                    if(finalMessage.toString().equalsIgnoreCase("")) {
+                        finalMessage = new StringBuilder(m);
                         continue;
                     }
-                    finalMessage = finalMessage + "\n" + m;
+                    finalMessage.append("\n").append(m);
                 }
 
-                messages.put(messageCode, messageUtil.color(finalMessage));
-                continue;
+                messages.put(messageCode, messageUtil.color(finalMessage.toString()));
             }
 
         }

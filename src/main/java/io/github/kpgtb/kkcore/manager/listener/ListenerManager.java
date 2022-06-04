@@ -16,10 +16,12 @@
 
 package io.github.kpgtb.kkcore.manager.listener;
 
+import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
 import io.github.kpgtb.kkcore.util.MessageUtil;
 import io.github.kpgtb.kkcore.util.ReflectionUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,22 +32,26 @@ import java.util.Arrays;
 public class ListenerManager {
     private final MessageUtil messageUtil;
     private final LanguageManager languageManager;
+    private final DataManager dataManager;
     private final File jarFile;
     private final JavaPlugin plugin;
+    private final FileConfiguration config;
 
-    public ListenerManager(MessageUtil messageUtil, LanguageManager languageManager, File jarFile, JavaPlugin plugin) {
+    public ListenerManager(MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, File jarFile, JavaPlugin plugin, FileConfiguration config) {
         this.messageUtil = messageUtil;
         this.languageManager = languageManager;
+        this.dataManager = dataManager;
         this.jarFile = jarFile;
         this.plugin = plugin;
+        this.config = config;
     }
 
     public void registerListeners(String listenerPackage) {
         for(Class<?> clazz : ReflectionUtil.getAllClassesInPackage(jarFile, listenerPackage)) {
             if(Arrays.asList(clazz.getInterfaces()).contains(Listener.class)) {
                 try {
-                    Listener listener = (Listener) clazz.getDeclaredConstructor(MessageUtil.class, LanguageManager.class)
-                            .newInstance(messageUtil,languageManager);
+                    Listener listener = (Listener) clazz.getDeclaredConstructor(MessageUtil.class, LanguageManager.class, DataManager.class, FileConfiguration.class)
+                            .newInstance(messageUtil,languageManager,dataManager, config);
                     Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                          NoSuchMethodException e) {
