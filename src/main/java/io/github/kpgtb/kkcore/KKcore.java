@@ -56,7 +56,8 @@ public final class KKcore extends JavaPlugin {
                 getFile(),
                 "defaultData/flat",
                  getTextResource("defaultData/sql/default.txt"),
-                 this
+                 this,
+                getConfig()
         );
 
         CommandManager commandManager = new CommandManager(getFile(), "KKcore", messageUtil, languageManager,dataManager, getConfig());

@@ -18,6 +18,7 @@ package io.github.kpgtb.kkcore.manager;
 
 import com.google.common.io.Files;
 import io.github.kpgtb.kkcore.util.MessageUtil;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,17 +37,19 @@ public class DataManager {
     private final String defaultFlatDataFolderName;
     private final Reader defaultSqlDataFile;
     private final JavaPlugin plugin;
+    private final FileConfiguration config;
 
     private final File dataDirectory;
     private Connection connection;
 
-    public DataManager(String pluginName, DataType type, String dataFolderPath, MessageUtil messageUtil, File jarFile, String defaultDataFolderName,Reader defaultSqlDataFile, JavaPlugin plugin) {
+    public DataManager(String pluginName, DataType type, String dataFolderPath, MessageUtil messageUtil, File jarFile, String defaultDataFolderName,Reader defaultSqlDataFile, JavaPlugin plugin, FileConfiguration coreConfig) {
         this.type = type;
         this.messageUtil = messageUtil;
         this.jarFile = jarFile;
         this.defaultFlatDataFolderName = defaultDataFolderName;
         this.defaultSqlDataFile = defaultSqlDataFile;
         this.plugin = plugin;
+        this.config = coreConfig;
 
         dataDirectory = new File(dataFolderPath + "/data/"+pluginName+"/");
 
@@ -68,11 +71,11 @@ public class DataManager {
     }
 
     private void initMySQL() {
-        String host = plugin.getConfig().getString("data.mysql-host");
-        String user = plugin.getConfig().getString("data.mysql-user");
-        String password = plugin.getConfig().getString("data.mysql-password");
-        String database = plugin.getConfig().getString("data.mysql-database");
-        int port = plugin.getConfig().getInt("data.mysql-port");
+        String host = config.getString("data.mysql-host");
+        String user = config.getString("data.mysql-user");
+        String password = config.getString("data.mysql-password");
+        String database = config.getString("data.mysql-database");
+        int port = config.getInt("data.mysql-port");
 
         try {
             connection = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+database, user, password);
