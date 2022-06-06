@@ -18,6 +18,7 @@ package io.github.kpgtb.kkcore.manager.command;
 
 import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
+import io.github.kpgtb.kkcore.manager.UsefulObjects;
 import io.github.kpgtb.kkcore.util.MessageUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -33,14 +34,14 @@ public abstract class KKcommand extends Command {
     private final CommandInfo commandInfo;
     private final LanguageManager languageManager;
 
-    public KKcommand(MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, FileConfiguration config) {
+    public KKcommand(UsefulObjects usefulObjects) {
         super("");
 
-        this.languageManager = languageManager;
+        this.languageManager = usefulObjects.getLanguageManager();
 
         commandInfo = getClass().getDeclaredAnnotation(CommandInfo.class);
         if(commandInfo == null) {
-            messageUtil.sendErrorToConsole("Commands must have CommandInfo!");
+            usefulObjects.getMessageUtil().sendErrorToConsole("Commands must have CommandInfo!");
             Bukkit.shutdown();
         }
         assert commandInfo != null;

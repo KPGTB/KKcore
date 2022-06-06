@@ -19,6 +19,7 @@ package io.github.kpgtb.kkcore;
 import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.DataType;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
+import io.github.kpgtb.kkcore.manager.UsefulObjects;
 import io.github.kpgtb.kkcore.manager.command.CommandManager;
 import io.github.kpgtb.kkcore.manager.listener.ListenerManager;
 import io.github.kpgtb.kkcore.util.MessageUtil;
@@ -60,10 +61,12 @@ public final class KKcore extends JavaPlugin {
                 getConfig()
         );
 
-        CommandManager commandManager = new CommandManager(getFile(), "KKcore", messageUtil, languageManager,dataManager, getConfig());
+        UsefulObjects usefulObjects = new UsefulObjects(messageUtil,languageManager,dataManager,getConfig());
+
+        CommandManager commandManager = new CommandManager(getFile(), "KKcore", usefulObjects);
         commandManager.registerCommands("io.github.kpgtb.kkcore.command");
 
-        ListenerManager listenerManager = new ListenerManager(messageUtil, languageManager,dataManager, getFile(), this, getConfig());
+        ListenerManager listenerManager = new ListenerManager(getFile(), this, usefulObjects);
         listenerManager.registerListeners("io.github.kpgtb.kkcore.listener");
 
 

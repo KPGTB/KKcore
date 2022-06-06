@@ -18,6 +18,7 @@ package io.github.kpgtb.kkcore.manager.command;
 
 import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
+import io.github.kpgtb.kkcore.manager.UsefulObjects;
 import io.github.kpgtb.kkcore.util.MessageUtil;
 import io.github.kpgtb.kkcore.util.ReflectionUtil;
 import org.bukkit.Bukkit;
@@ -32,27 +33,23 @@ import java.util.HashMap;
 public class CommandManager {
     private final HashMap<String, CommandInfo> commands = new HashMap<>();
 
+    private final UsefulObjects usefulObjects;
     private final MessageUtil messageUtil;
-    private final LanguageManager languageManager;
-    private final DataManager dataManager;
     private final String pluginTag;
     private final File jarFile;
-    private final FileConfiguration config;
 
-    public CommandManager(File jarfile, String pluginTag, MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, FileConfiguration config) {
+    public CommandManager(File jarfile, String pluginTag, UsefulObjects usefulObjects) {
+        this.usefulObjects = usefulObjects;
+        this.messageUtil = usefulObjects.getMessageUtil();
         this.jarFile = jarfile;
-        this.messageUtil = messageUtil;
-        this.languageManager = languageManager;
         this.pluginTag = pluginTag;
-        this.dataManager = dataManager;
-        this.config = config;
     }
 
     public void registerCommands(String commandPackage) {
         for(Class<?> clazz : ReflectionUtil.getAllClassesInPackage(jarFile, commandPackage, KKcommand.class)) {
             try {
-                KKcommand command = (KKcommand) clazz.getDeclaredConstructor(MessageUtil.class, LanguageManager.class, DataManager.class, FileConfiguration.class)
-                        .newInstance(messageUtil, languageManager, dataManager, config);
+                KKcommand command = (KKcommand) clazz.getDeclaredConstructor(UsefulObjects.class)
+                        .newInstance(usefulObjects);
 
                 // Register command
                 Field f = Bukkit.getServer().getClass().getDeclaredField("commandMap");

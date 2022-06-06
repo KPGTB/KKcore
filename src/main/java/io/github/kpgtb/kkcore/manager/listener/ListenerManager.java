@@ -18,6 +18,7 @@ package io.github.kpgtb.kkcore.manager.listener;
 
 import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
+import io.github.kpgtb.kkcore.manager.UsefulObjects;
 import io.github.kpgtb.kkcore.util.MessageUtil;
 import io.github.kpgtb.kkcore.util.ReflectionUtil;
 import org.bukkit.Bukkit;
@@ -30,28 +31,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public class ListenerManager {
+    private final UsefulObjects usefulObjects;
     private final MessageUtil messageUtil;
-    private final LanguageManager languageManager;
-    private final DataManager dataManager;
     private final File jarFile;
     private final JavaPlugin plugin;
-    private final FileConfiguration config;
 
-    public ListenerManager(MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, File jarFile, JavaPlugin plugin, FileConfiguration config) {
-        this.messageUtil = messageUtil;
-        this.languageManager = languageManager;
-        this.dataManager = dataManager;
+    public ListenerManager(File jarFile, JavaPlugin plugin,UsefulObjects usefulObjects) {
+        this.usefulObjects = usefulObjects;
+        this.messageUtil = usefulObjects.getMessageUtil();
         this.jarFile = jarFile;
         this.plugin = plugin;
-        this.config = config;
     }
 
     public void registerListeners(String listenerPackage) {
         for(Class<?> clazz : ReflectionUtil.getAllClassesInPackage(jarFile, listenerPackage)) {
             if(Arrays.asList(clazz.getInterfaces()).contains(Listener.class)) {
                 try {
-                    Listener listener = (Listener) clazz.getDeclaredConstructor(MessageUtil.class, LanguageManager.class, DataManager.class, FileConfiguration.class)
-                            .newInstance(messageUtil,languageManager,dataManager, config);
+                    Listener listener = (Listener) clazz.getDeclaredConstructor(UsefulObjects.class)
+                            .newInstance(usefulObjects);
                     Bukkit.getServer().getPluginManager().registerEvents(listener, plugin);
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                          NoSuchMethodException e) {

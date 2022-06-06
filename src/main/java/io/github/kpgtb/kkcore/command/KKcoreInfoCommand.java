@@ -18,21 +18,21 @@ package io.github.kpgtb.kkcore.command;
 
 import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
+import io.github.kpgtb.kkcore.manager.UsefulObjects;
 import io.github.kpgtb.kkcore.manager.command.CommandInfo;
 import io.github.kpgtb.kkcore.manager.command.KKcommand;
 import io.github.kpgtb.kkcore.util.MessageUtil;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 
 @CommandInfo(name="KKcoreInfo", description = "This command shows info about KKcore", aliases = {"kkcinfo"})
 public class KKcoreInfoCommand extends KKcommand {
 
     private final MessageUtil messageUtil;
 
-    public KKcoreInfoCommand(MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, FileConfiguration config) {
-        super(messageUtil, languageManager, dataManager, config);
+    public KKcoreInfoCommand(UsefulObjects usefulObjects) {
+        super(usefulObjects);
 
-        this.messageUtil = messageUtil;
+        this.messageUtil = usefulObjects.getMessageUtil();
     }
 
 

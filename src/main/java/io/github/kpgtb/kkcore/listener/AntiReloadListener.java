@@ -18,6 +18,7 @@ package io.github.kpgtb.kkcore.listener;
 
 import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
+import io.github.kpgtb.kkcore.manager.UsefulObjects;
 import io.github.kpgtb.kkcore.util.MessageUtil;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -32,9 +33,9 @@ public class AntiReloadListener implements Listener {
     private final MessageUtil messageUtil;
     private final LanguageManager languageManager;
 
-    public AntiReloadListener(MessageUtil messageUtil, LanguageManager languageManager, DataManager dataManager, FileConfiguration config) {
-        this.messageUtil = messageUtil;
-        this.languageManager = languageManager;
+    public AntiReloadListener(UsefulObjects usefulObjects) {
+        this.messageUtil = usefulObjects.getMessageUtil();
+        this.languageManager = usefulObjects.getLanguageManager();
     }
 
     @EventHandler
