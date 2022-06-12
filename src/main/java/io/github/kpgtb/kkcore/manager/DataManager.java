@@ -44,6 +44,8 @@ public class DataManager {
     private final File dataDirectory;
     private Connection connection;
 
+    private boolean newDatabase;
+
     public DataManager(String pluginName, DataType type, String dataFolderPath, MessageUtil messageUtil, File jarFile, String defaultDataFolderName,Reader defaultSqlDataFile, JavaPlugin plugin, FileConfiguration coreConfig) {
         this.pluginName = pluginName;
         this.type = type;
@@ -53,10 +55,12 @@ public class DataManager {
         this.defaultSqlDataFile = defaultSqlDataFile;
         this.plugin = plugin;
         this.config = coreConfig;
+        this.newDatabase = false;
 
         dataDirectory = new File(dataFolderPath + "/data/"+pluginName+"/");
 
        if(!dataDirectory.exists()) {
+           this.newDatabase = true;
            dataDirectory.mkdirs();
        }
 
@@ -147,11 +151,23 @@ public class DataManager {
            case MYSQL:
                BufferedReader reader= new BufferedReader(defaultSqlDataFile);
 
+               boolean[] defaultValues = new boolean[1];
+
                reader.lines().forEach(line -> {
                    try {
                        if(!connection.isClosed()) {
 
-                           connection.prepareStatement(line).execute();
+                           if(line.equalsIgnoreCase("=VALUES=")) {
+                               defaultValues[0] = true;
+                           } else {
+                               if(defaultValues[0]) {
+                                   if(newDatabase) {
+                                       connection.prepareStatement(line).execute();
+                                   }
+                               } else {
+                                   connection.prepareStatement(line).execute();
+                               }
+                           }
                        }
                    } catch (SQLException e) {
                        messageUtil.sendErrorToConsole("Error while preparing database!");
@@ -196,7 +212,7 @@ public class DataManager {
 
                 try {
                     PreparedStatement statement = connection.prepareStatement(
-                            "SELECT "+value+ " FROM "+pluginName.toLowerCase() + "_" + location.replace("/", "_")+" WHERE  id="+key
+                            "SELECT "+value+ " FROM "+pluginName.toLowerCase() + "_" + location.replace("/", "_")+" WHERE  id='"+key+"'"
                     );
 
                     ResultSet resultSet = statement.executeQuery();
@@ -283,13 +299,13 @@ public class DataManager {
                 try {
                     if (!check) {
                         PreparedStatement addKeyStatement = connection.prepareStatement(
-                                "INSERT INTO " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " (id) VALUES (" + key + ")"
+                                "INSERT INTO " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " (id) VALUES ('" + key + "')"
                         );
                         addKeyStatement.execute();
                     }
 
                     PreparedStatement statement = connection.prepareStatement(
-                            "UPDATE " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " SET " + value + "=" + newValue + " WHERE id=" + key
+                            "UPDATE " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " SET " + value + "='" + newValue + "' WHERE id='" + key+"'"
                     );
                     statement.execute();
                     return true;
