@@ -16,11 +16,9 @@
 
 package io.github.kpgtb.kkcore.listener;
 
-import io.github.kpgtb.kkcore.manager.DataManager;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
 import io.github.kpgtb.kkcore.manager.UsefulObjects;
 import io.github.kpgtb.kkcore.util.MessageUtil;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

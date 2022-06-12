@@ -16,8 +16,6 @@
 
 package io.github.kpgtb.kkcore;
 
-import io.github.kpgtb.kkcore.manager.DataManager;
-import io.github.kpgtb.kkcore.manager.DataType;
 import io.github.kpgtb.kkcore.manager.LanguageManager;
 import io.github.kpgtb.kkcore.manager.UsefulObjects;
 import io.github.kpgtb.kkcore.manager.command.CommandManager;
@@ -28,7 +26,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class KKcore extends JavaPlugin {
 
     private MessageUtil messageUtil;
-    private DataManager dataManager;
 
     @Override
     public void onEnable() {
@@ -47,21 +44,7 @@ public final class KKcore extends JavaPlugin {
         );
         languageManager.reloadMessages();
 
-        dataManager = new DataManager(
-                "KKcore",
-                DataType.valueOf(
-                        getConfig().getString("data.type").toUpperCase()
-                ),
-                getDataFolder().getAbsolutePath(),
-                messageUtil,
-                getFile(),
-                "defaultData/flat",
-                 getTextResource("defaultData/sql/default.txt"),
-                 this,
-                getConfig()
-        );
-
-        UsefulObjects usefulObjects = new UsefulObjects(messageUtil,languageManager,dataManager,getConfig());
+        UsefulObjects usefulObjects = new UsefulObjects(messageUtil,languageManager,null,getConfig());
 
         CommandManager commandManager = new CommandManager(getFile(), "KKcore", usefulObjects);
         commandManager.registerCommands("io.github.kpgtb.kkcore.command");
@@ -75,7 +58,5 @@ public final class KKcore extends JavaPlugin {
     @Override
     public void onDisable() {
         messageUtil.sendInfoToConsole("Disabling KKcore plugin by KPG-TB.");
-
-        dataManager.closeConnection();
     }
 }

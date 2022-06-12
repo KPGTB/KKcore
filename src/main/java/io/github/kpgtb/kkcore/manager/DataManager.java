@@ -31,6 +31,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class DataManager {
+
+    private final String pluginName;
     private final DataType type;
     private final MessageUtil messageUtil;
     private final File jarFile;
@@ -43,6 +45,7 @@ public class DataManager {
     private Connection connection;
 
     public DataManager(String pluginName, DataType type, String dataFolderPath, MessageUtil messageUtil, File jarFile, String defaultDataFolderName,Reader defaultSqlDataFile, JavaPlugin plugin, FileConfiguration coreConfig) {
+        this.pluginName = pluginName;
         this.type = type;
         this.messageUtil = messageUtil;
         this.jarFile = jarFile;
@@ -147,6 +150,7 @@ public class DataManager {
                reader.lines().forEach(line -> {
                    try {
                        if(!connection.isClosed()) {
+
                            connection.prepareStatement(line).execute();
                        }
                    } catch (SQLException e) {
@@ -175,13 +179,13 @@ public class DataManager {
         return files;
     }
 
-    public Object get(String localization, Object key, Object value) {
+    public Object get(String location, Object key, Object value) {
         switch(type) {
             case FLAT:
 
-                File file = new File(dataDirectory.getAbsolutePath()  + "/" + localization + ".yml");
+                File file = new File(dataDirectory.getAbsolutePath()  + "/" + location + ".yml");
                 if(!file.exists()) {
-                    messageUtil.sendErrorToConsole("File not found! ["+localization+"]");
+                    messageUtil.sendErrorToConsole("File not found! ["+location+"]");
                     break;
                 }
 
@@ -192,7 +196,7 @@ public class DataManager {
 
                 try {
                     PreparedStatement statement = connection.prepareStatement(
-                            "SELECT "+value+ " FROM "+localization.replace("/", "_")+" WHERE  id="+key
+                            "SELECT "+value+ " FROM "+pluginName.toLowerCase() + "_" + location.replace("/", "_")+" WHERE  id="+key
                     );
 
                     ResultSet resultSet = statement.executeQuery();
@@ -207,21 +211,21 @@ public class DataManager {
 
                      return result;
                 } catch (SQLException e) {
-                    messageUtil.sendErrorToConsole("Error while getting data from database! [localization: "+localization+" | key: "+key+" | value: " + value + "]");
+                    messageUtil.sendErrorToConsole("Error while getting data from database! [location: "+location+" | key: "+key+" | value: " + value + "]");
                     break;
                 }
         }
 
         return null;
     }
-    public Set<Object> getKeys(String localization) {
+    public Set<Object> getKeys(String location) {
         Set<Object> keys = new HashSet<>();
 
         switch (type) {
             case FLAT:
-                File file = new File(dataDirectory.getAbsolutePath()  + "/" + localization + ".yml");
+                File file = new File(dataDirectory.getAbsolutePath()  + "/" + location + ".yml");
                 if(!file.exists()) {
-                    messageUtil.sendErrorToConsole("File not found! ["+localization+"]");
+                    messageUtil.sendErrorToConsole("File not found! ["+location+"]");
                     break;
                 }
 
@@ -232,7 +236,7 @@ public class DataManager {
             case SQLITE:
                 try {
                     PreparedStatement statement = connection.prepareStatement(
-                            "SELECT id FROM "+localization.replace("/", "_")
+                            "SELECT id FROM "+pluginName.toLowerCase()  + "_" + location.replace("/", "_")
                     );
 
                     ResultSet resultSet = statement.executeQuery();
@@ -241,7 +245,7 @@ public class DataManager {
                     }
                     resultSet.close();
                 } catch (SQLException e) {
-                    messageUtil.sendErrorToConsole("Error while getting keys from database! [localization: "+localization+"]");
+                    messageUtil.sendErrorToConsole("Error while getting keys from database! [location: "+location+"]");
                     break;
                 }
                 break;
@@ -250,13 +254,13 @@ public class DataManager {
         return keys;
     }
 
-    public boolean set(String localization, Object key, Object value, Object newValue) {
+    public boolean set(String location, Object key, Object value, Object newValue) {
         switch(type){
             case FLAT:
 
-                File file = new File(dataDirectory.getAbsolutePath()  + "/" + localization + ".yml");
+                File file = new File(dataDirectory.getAbsolutePath()  + "/" + location + ".yml");
                 if(!file.exists()) {
-                    messageUtil.sendErrorToConsole("File not found! ["+localization+"]");
+                    messageUtil.sendErrorToConsole("File not found! ["+location+"]");
                     break;
                 }
 
@@ -266,7 +270,7 @@ public class DataManager {
                     configuration.save(file);
                     return true;
                 } catch (IOException e) {
-                    messageUtil.sendErrorToConsole("Error while saving file! ["+localization+"]");
+                    messageUtil.sendErrorToConsole("Error while saving file! ["+location+"]");
                     e.printStackTrace();
                 }
                 break;
@@ -274,23 +278,23 @@ public class DataManager {
             case MYSQL:
 
                 //Check if key exists
-                boolean check = getKeys(localization).contains(key);
+                boolean check = getKeys(location).contains(key);
 
                 try {
                     if (!check) {
                         PreparedStatement addKeyStatement = connection.prepareStatement(
-                                "INSERT INTO " + localization.replace("/", "_") + " (id) VALUES (" + key + ")"
+                                "INSERT INTO " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " (id) VALUES (" + key + ")"
                         );
                         addKeyStatement.execute();
                     }
 
                     PreparedStatement statement = connection.prepareStatement(
-                            "UPDATE " + localization.replace("/", "_") + " SET " + value + "=" + newValue + " WHERE id=" + key
+                            "UPDATE " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " SET " + value + "=" + newValue + " WHERE id=" + key
                     );
                     statement.execute();
                     return true;
                 } catch(SQLException e) {
-                    messageUtil.sendErrorToConsole("Error while inserting data to database! [localization: "+localization+" | key: "+key+" | value: " + value + " | new value: "+newValue+"]");
+                    messageUtil.sendErrorToConsole("Error while inserting data to database! [location: "+location+" | key: "+key+" | value: " + value + " | new value: "+newValue+"]");
                     e.printStackTrace();
                 }
                 break;

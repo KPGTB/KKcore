@@ -20,4 +20,4 @@ noPermission: "&cYou don't have permissions to use this command! &7(&e{PERMISSIO
 wrongUsage: "&cWrong usage! Correct usage: &e{USAGE}"
 # No PAPI
 onlyPlayer: "&cThis command is only for players!"
-noReload: "&cReload command is not recommended!"
+noReload: "&cReload is not recommended!"
