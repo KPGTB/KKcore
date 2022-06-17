@@ -318,6 +318,78 @@ public class DataManager {
 
         return false;
     }
+    public boolean add(String location, Object key) {
+        switch(type){
+            case FLAT:
+
+                File file = new File(dataDirectory.getAbsolutePath()  + "/" + location + ".yml");
+                if(!file.exists()) {
+                    messageUtil.sendErrorToConsole("File not found! ["+location+"]");
+                    break;
+                }
+
+                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+                configuration.createSection(key.toString());
+                try {
+                    configuration.save(file);
+                    return true;
+                } catch (IOException e) {
+                    messageUtil.sendErrorToConsole("Error while saving file! ["+location+"]");
+                    e.printStackTrace();
+                }
+                break;
+            case SQLITE:
+            case MYSQL:
+                try {
+                    PreparedStatement addKeyStatement = connection.prepareStatement(
+                            "INSERT INTO " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " (id) VALUES ('" + key + "')"
+                    );
+                    return addKeyStatement.execute();
+                } catch(SQLException e) {
+                    messageUtil.sendErrorToConsole("Error while inserting data to database! [location: "+location+" | key: "+key+" ]");
+                    e.printStackTrace();
+                }
+                break;
+        }
+
+        return false;
+    }
+    public boolean delete(String location, Object key) {
+        switch(type){
+            case FLAT:
+
+                File file = new File(dataDirectory.getAbsolutePath()  + "/" + location + ".yml");
+                if(!file.exists()) {
+                    messageUtil.sendErrorToConsole("File not found! ["+location+"]");
+                    break;
+                }
+
+                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+                configuration.set(key.toString(), "");
+                try {
+                    configuration.save(file);
+                    return true;
+                } catch (IOException e) {
+                    messageUtil.sendErrorToConsole("Error while saving file! ["+location+"]");
+                    e.printStackTrace();
+                }
+                break;
+            case SQLITE:
+            case MYSQL:
+                try {
+                    PreparedStatement deleteKeyStatement = connection.prepareStatement(
+                            "DELETE FROM " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " WHERE id=`"+key+"`"
+                    );
+                    return deleteKeyStatement.execute();
+                } catch(SQLException e) {
+                    messageUtil.sendErrorToConsole("Error while deleting data from database! [location: "+location+" | key: "+key+" ]");
+                    e.printStackTrace();
+                }
+                break;
+        }
+
+        return false;
+    }
 
     public void closeConnection() {
         try {

@@ -49,6 +49,8 @@ public class LanguageManager {
     }
 
     public void reloadMessages() {
+        messages.clear();
+
         File languageDir = new File(dataFolderPath + "/languages/"+pluginName+"/");
 
         if(!languageDir.exists()) {
@@ -79,6 +81,55 @@ public class LanguageManager {
         // Load messages
 
         for(String messageCode : yaml.getKeys(false)) {
+
+            Object message = yaml.get(messageCode);
+
+            if(message instanceof String) {
+                messages.put(messageCode, messageUtil.color((String) message));
+                continue;
+            }
+
+            if(message instanceof List<?>) {
+                StringBuilder finalMessage = new StringBuilder();
+
+                for (String m : (List<String>) message) {
+                    if(finalMessage.toString().equalsIgnoreCase("")) {
+                        finalMessage = new StringBuilder(m);
+                        continue;
+                    }
+                    finalMessage.append("\n").append(m);
+                }
+
+                messages.put(messageCode, messageUtil.color(finalMessage.toString()));
+            }
+
+        }
+
+        reloadCoreMessages();
+    }
+    public void reloadCoreMessages() {
+        File languageDir = new File(dataFolderPath + "/languages/KKcore/");
+
+        if(!languageDir.exists()) {
+            return;
+        }
+
+        // Create file with messages if not exists
+        File languageFile = new File(dataFolderPath + "/languages/KKcore/"+language+".yml");
+
+        if(!languageFile.exists()) {
+            return;
+        }
+
+        YamlConfiguration yaml = YamlConfiguration.loadConfiguration(languageFile);
+
+        // Load messages
+
+        for(String messageCode : yaml.getKeys(false)) {
+
+            if(messages.containsKey(messageCode)) {
+                return;
+            }
 
             Object message = yaml.get(messageCode);
 
