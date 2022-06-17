@@ -381,7 +381,8 @@ public class DataManager {
                     PreparedStatement deleteKeyStatement = connection.prepareStatement(
                             "DELETE FROM " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " WHERE id='"+key+"'"
                     );
-                    return deleteKeyStatement.execute();
+                    deleteKeyStatement.execute();
+                    return true;
                 } catch(SQLException e) {
                     messageUtil.sendErrorToConsole("Error while deleting data from database! [location: "+location+" | key: "+key+" ]");
                     e.printStackTrace();
