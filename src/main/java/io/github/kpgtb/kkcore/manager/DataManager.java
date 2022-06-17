@@ -344,7 +344,8 @@ public class DataManager {
                     PreparedStatement addKeyStatement = connection.prepareStatement(
                             "INSERT INTO " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " (id) VALUES ('" + key + "')"
                     );
-                    return addKeyStatement.execute();
+                    addKeyStatement.execute();
+                    return true;
                 } catch(SQLException e) {
                     messageUtil.sendErrorToConsole("Error while inserting data to database! [location: "+location+" | key: "+key+" ]");
                     e.printStackTrace();
@@ -365,7 +366,7 @@ public class DataManager {
                 }
 
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-                configuration.set(key.toString(), "");
+                configuration.set(key.toString(), null);
                 try {
                     configuration.save(file);
                     return true;
@@ -378,7 +379,7 @@ public class DataManager {
             case MYSQL:
                 try {
                     PreparedStatement deleteKeyStatement = connection.prepareStatement(
-                            "DELETE FROM " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " WHERE id=`"+key+"`"
+                            "DELETE FROM " + pluginName.toLowerCase()  + "_" + location.replace("/", "_") + " WHERE id='"+key+"'"
                     );
                     return deleteKeyStatement.execute();
                 } catch(SQLException e) {
