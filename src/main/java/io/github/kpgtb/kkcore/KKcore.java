@@ -57,6 +57,6 @@ public final class KKcore extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        messageUtil.sendInfoToConsole("Disabling KKcore plugin by KPG-TB.");
+        messageUtil.sendInfoToConsole("Disabling plugin KKcore by KPG-TB.");
     }
 }
