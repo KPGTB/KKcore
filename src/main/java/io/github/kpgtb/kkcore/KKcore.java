@@ -33,7 +33,7 @@ public final class KKcore extends JavaPlugin {
 
         messageUtil = new MessageUtil("&2KKcore&r");
 
-        messageUtil.sendInfoToConsole("Loading KKcore plugin by KPG-TB.");
+        messageUtil.sendInfoToConsole("Enabling plugin KKcore created by KPG-TB");
 
         LanguageManager languageManager = new LanguageManager(
                 "KKcore",
